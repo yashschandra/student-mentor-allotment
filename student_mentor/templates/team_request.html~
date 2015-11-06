@@ -1,0 +1,15 @@
+<html>
+	<body>
+		{% if requests %}
+			{% for request in requests %}
+				{{ request.team_name }}&nbsp;{{ request.event }}&nbsp;
+				{% for student in request.students %}
+					{{ student.name }}&nbsp;
+				{% endfor %}
+				<button type="button">Accept</button>
+			{% endfor %}
+		{% else %}
+			No team requests.
+		{% endif %}
+	</body>
+</html>

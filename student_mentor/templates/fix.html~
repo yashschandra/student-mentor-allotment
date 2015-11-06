@@ -1,0 +1,124 @@
+{% load staticfiles %}
+<html>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="{% static "js/jquery.simple-dtpicker.js" %}"></script>
+	<link type="text/css" href="{% static "css/jquery.simple-dtpicker.css" %}" rel="stylesheet" />
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/check-datetime.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<div class="row" style="margin: 15px">
+			<form id="form" method="post">
+				{% csrf_token %}
+				<table>
+					<tr><td><label for="date_time" style="color: #ffffff">Date and Time:&nbsp;</label></td><td><input type="text" name="date_time" id="datetimepicker" required/></td></tr>
+					<tr><td><label for="place" style="color: #ffffff">Place:&nbsp;</label></td><td><input type="text" maxlength="30" name="place" id="place" required/></td></tr>
+					<tr><td><button type="submit" id="submit-button">Fix</button></td></tr>
+				</table>
+			</form>
+		<div>
+		<div class="row" id="busy-slots"></div>
+	</body>
+	<script type="text/javascript">
+		$(function(){
+			$('*[name=date_time]').appendDtpicker({futureOnly: true});
+		});
+		var datetime="{{ datetime|date:'Y-m-d H:i' }}";
+		var fix_anyway=false;
+		//var datetime="{{ datetime }}";
+		document.getElementById('form').onsubmit=function()
+		{
+			//return false;
+			if(!(check_datetime($('#datetimepicker').val())))
+				return false;	
+			if(check_datetime($('#datetimepicker').val()))
+				if($('#datetimepicker').val()>=datetime)
+				{
+					alert('Cannot assign time');
+					return false;
+				}
+				else
+					if(fix_anyway)
+						return true;
+					else
+						return check_slots();
+			else
+				return false;
+		}
+		function check_slots()
+		{
+			$.post('http://localhost:8000/get_slots/', {csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, date: $('#datetimepicker').val()})
+			.done(function(data)
+				{
+					var meetings=0;
+					if(data!=undefined)
+					{
+						document.getElementById('submit-button').disabled=true;
+						document.getElementById('datetimepicker').readOnly=true;
+						document.getElementById('place').readOnly=true;
+						for(i=0; i<4; i++)
+							meetings+=data.busy_slots[i].length;
+								//alert(data.busy_slots[i][j].time);
+						if(meetings>0)
+						{
+							document.getElementById('busy-slots').innerHTML="Warning!!<br>You already have <a href='/meetings'>"+meetings+"</a> meetings scheduled<br>";
+							var p=document.createElement('P');
+							var text=document.createTextNode('Do you still want to fix meeting..??');
+							p.appendChild(text);
+							var button1=document.createElement('BUTTON');
+							var button2=document.createElement('BUTTON');
+							text=document.createTextNode('Fix Anyway');
+							button1.appendChild(text);
+							button1.setAttribute('onclick','fix()');
+							text=document.createTextNode('Re-fix');
+							button2.appendChild(text);
+							button2.setAttribute('onclick','re_fix()');
+							document.getElementById('busy-slots').appendChild(p);
+							document.getElementById('busy-slots').appendChild(button1);
+							document.getElementById('busy-slots').appendChild(button2);
+							return false;
+						}
+						else
+							fix();
+					}
+				}
+			);
+			return false;
+		}
+		function fix()
+		{
+			fix_anyway=true;
+			document.getElementById('form').submit();
+		}
+		function re_fix()
+		{
+			document.getElementById('submit-button').disabled=false;
+			document.getElementById('datetimepicker').readOnly=false;
+			document.getElementById('place').readOnly=false;
+			document.getElementById('busy-slots').innerHTML='';
+			return false;
+		}
+	</script>
+</html>

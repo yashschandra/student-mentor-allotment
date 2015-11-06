@@ -1,0 +1,187 @@
+{% load staticfiles %}
+<html>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="{% static "js/jquery.simple-dtpicker.js" %}"></script>
+	<link type="text/css" href="{% static "css/jquery.simple-dtpicker.css" %}" rel="stylesheet" />
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/check-datetime.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<script>
+		var id_token="{{ id_token }}";
+	</script>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<div class="row" style="margin: 15px">
+			<form method="post" id="form">
+				{% csrf_token %}
+				<table>
+					<tr><td><label for="name"> Event Name:&nbsp;</label></td><td><input type="text" maxlength="50" name="name" required/></td></tr>
+					<tr><td><label for="on">Event Date:&nbsp;</label></td><td><input type="text" name="on" id="on" required/></td></tr>
+					<tr><td><label for="mentor_provided">Mentors Will be Provided:&nbsp;</label></td><td><input type="radio" id="mentor_provided_yes" name="mentor_provided" value="yes" checked> YES&nbsp;<input type="radio" id="mentor_provided_no" name="mentor_provided" value="no"/> NO</td></tr>
+					<tr><td><label for="deadline_mentor">Deadline for Mentor Registration:&nbsp;</label></td><td><input type="text" name="deadline_mentor" id="deadline_mentor"/></td></tr>
+					<tr><td><label for="startdate_participant">Participant Registration Starts:&nbsp;</label></td><td><input type="text" name="startdate_participant" id="startdate_participant" required/></td></tr>
+					<tr><td><label for="deadline_participant">Participant Registration Ends:&nbsp;</label></td><td><input type="text" name="deadline_participant" id="deadline_participant" required/></td></tr>
+					<tr><td><label for="club">Club:&nbsp;</label></td><td><select name="club" id="club" required>
+					{% for club in clubs %}
+						<option value="{{ club.club_id }}">{{ club.club_name }}</option>
+					{% endfor %}
+				</select></td></tr>
+					<tr><td><label for="mentor_yaer_cutoff">Cut Off year for Mentors:&nbsp;</label></td><td><select name="mentor_year_cutoff" id="mentor_year_cutoff" required>
+					<option value=4>4</option>
+					<option value=3>3</option>
+					<option value=2>2</option>
+				</select></td></tr>
+					<tr><td><label for="participant_year_cutoff">Cut Off year for Participants:&nbsp;</label></td><td><select name="participant_year_cutoff" id="participant_year_cutoff" required>
+					<option value=1>1</option>
+					<option value=2>2</option>
+					<option value=3>3</option>
+					<option value=4>4</option>
+					<option value=5>5</option>
+				</select></td></tr>
+					<tr><td><label for="team_event">Is this Team Event:&nbsp;</label></td><td><input type="radio" name="team_event" value="yes"> YES&nbsp; <input type="radio" name="team_event" value="no" checked/> NO</td></tr>
+					<tr><td><label for="max_participants">Maximum participants in a Team:&nbsp;</label></td><td><input type="number" min="0" max="100" name="max_participants" id="max_participants" disabled/></td></tr>
+					<tr><td><label for="min_participants">Minimum participants in a Team:&nbsp;</label></td><td><input type="number" min="0" max="100" name="min_participants" id="min_participants" disabled/></td></tr>
+					<tr><td><label for="event_type">Event Type:&nbsp;</label></td><td><select name="event_type" required>
+					<option value="Formal">Formal</option>
+					<option value="Informal">Informal</option>
+				</select></td></tr>
+					<tr><td><label for="mentor_provided">Event Description:&nbsp;</label></td><td><textarea id="description" name="description" rows=3 required></textarea></td></tr>
+					<tr><td><label for="password">Secret Key:&nbsp;</label></td><td><input type="password" name="password" required/></td></tr>
+					<tr><td><button type="submit">Submit</button></td></tr>
+				</table>
+			</form>
+		</div>
+	</body>
+	<script>
+    		$(function()
+    			{
+				$('*[name=deadline_mentor]').appendDtpicker({futureOnly: true});
+			}
+		);
+		$(function()
+			{
+				$('*[name=startdate_participant]').appendDtpicker({futureOnly: true});
+			}
+		);
+		$(function()
+			{
+				$('*[name=deadline_participant]').appendDtpicker({futureOnly: true});
+			}
+		);
+		$(function()
+			{
+				$('*[name=on]').appendDtpicker({futureOnly: true});
+			}
+		);
+		$('input:radio[name="team_event"]').change(function()
+			{
+        			if (this.checked && this.value == 'yes') 
+        			{
+        				$('#max_participants').prop('disabled', false);
+        				$('#min_participants').prop('disabled', false);
+        				$('#max_participants').prop('required', true);
+        				$('#min_participants').prop('required', true);
+	 			}
+	 			if (this.checked && this.value == 'no') 
+        			{
+        				$('#max_participants').prop('disabled', true);
+        				$('#min_participants').prop('disabled', true);
+        				$('#max_participants').prop('required', false);
+        				$('#min_participants').prop('required', false);
+	 			}
+			}
+		);
+		$('input:radio[name="mentor_provided"]').change(function()
+			{
+        			if (this.checked && this.value == 'yes') 
+        			{
+        				$('#deadline_mentor').prop('disabled', false);
+        				$('#mentor_year_cutoff').prop('disabled', false);
+	 			}
+	 			if (this.checked && this.value == 'no') 
+        			{
+        				$('#deadline_mentor').prop('disabled', true);
+        				$('#mentor_year_cutoff').prop('disabled', true);
+	 			}
+			}
+		);
+		document.getElementById('form').onsubmit=function()
+		{
+			if(!(check_datetime($('#deadline_participant').val()) && check_datetime($('#startdate_participant').val()) && check_datetime($('#on').val())))
+			{
+				alert('Please enter valid date');
+				return false;
+			}
+			if(!(document.getElementById('mentor_provided_yes').value=="yes" && (check_datetime($('#deadline_mentor').val()))))
+			{
+				alert('Please enter valid date');
+				return false;
+			}
+			if(!document.getElementById('min_participants').disabled && document.getElementById('min_participants').value>document.getElementById('max_participants').value)
+			{
+				alert('Form Error');
+				return false;
+			}
+			if($('#on').val()>=$('#deadline_participant').val() && $('#deadline_participant').val()>=$('#startdate_participant').val() && $('#on').val()>=$('#startdate_participant').val())
+				if(document.getElementById('mentor_provided_yes').value=="yes")
+					if($('#startdate_participant').val()>=$('#deadline_mentor').val())
+						return check_name();
+					else
+					{
+						alert('Date Error');
+						return false;
+					}
+				else
+					return check_name();
+			else
+			{
+				alert('Date Error');
+				return false;
+			}
+		}
+		function check_name()
+		{
+			//alert('check name');
+			var name=document.getElementsByName('name')[0].value;
+			$.post('http://localhost:8000/check_name/',{csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value, name: name})
+			.done(function(data)
+				{
+					if(data!=undefined)
+						if(data.data=='OK')
+							return true;
+						else
+						{
+							alert('Please try a different name.');
+							return false;
+						}
+					else
+					{
+						alert('Something went wrong. Please try again.');
+						return false;
+					}
+				}
+			);
+		}
+	</script>
+</html>

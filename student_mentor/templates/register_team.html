@@ -1,0 +1,108 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<script>
+		var id_token="{{ id_token }}";
+	</script>
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	.transbox
+{
+  border: 1px solid black;
+  opacity:0.5;
+  filter:alpha(opacity=60); /* For IE8 and earlier */
+}
+	</style>
+	<script>
+		var len=0,min_participants="{{ min }}";
+		function add_member()
+		{
+			len = document.getElementById('form').elements.length-2;
+			//alert(len);
+			var input=document.createElement('INPUT');
+			input.setAttribute('type','email');
+			input.setAttribute('id',"student"+len);
+			input.setAttribute('name','student_email');
+			input.setAttribute('maxlength','50');
+			input.required=true;
+			document.getElementById('form').appendChild(input);
+			var button=document.createElement('BUTTON');
+			button.setAttribute('type','button');
+			button.setAttribute('id','button');
+			var text=document.createTextNode('Add');
+			button.appendChild(text);
+			button.setAttribute('onclick','add_new_member()');
+			document.getElementById('form').appendChild(button);
+			document.getElementById('add-member-button').onclick=function(){ do_nothing() };
+			document.getElementById('submit-button').onclick=do_nothing();
+		}
+		function do_nothing()
+		{
+			return false;
+		}
+		function add_new_member()
+		{
+			for(i=0; i<len && document.getElementById('student'+i).value!=document.getElementById('student'+len).value; i++);
+			if(i==len)
+				if(document.getElementById('student'+len).value.length>0)
+				{
+					document.getElementById('student'+len).readOnly=true;
+					document.getElementById('add-member-button').onclick=function(){ add_member() };
+					document.getElementById('submit-button').onclick=function(){ submit_form() };
+					document.getElementById('form').removeChild(document.getElementById('button'));
+				}
+				else
+					alert('Please give a valid email id');
+			else
+				alert('Name already present');
+		}
+		function submit_form()
+		{
+			len = document.getElementById('form').elements.length-2;
+			//alert(document.getElementsByName('team_name')[0].value[0]);
+			if (len>=min_participants)
+				if(!(document.getElementsByName('team_name')[0].value[0]==' ' || document.getElementsByName('team_name')[0].value[0]==undefined) && /^[A-Za-z ]*$/.test(document.getElementsByName('team_name')[0].value))
+					document.getElementById('form').submit();
+				else
+					alert('Please give your team a valid name. Team name must contain alphabets and white space between them. And must start with an alphabet.');
+			else
+				alert('Not enough members in team.');
+		}
+	</script>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<div class="row" class="transbox">
+			<form method="post" id="form">
+				{% csrf_token %}
+				Team Name: <input type="text" name="team_name" maxlength="30" required/><br>
+				Members: <input type="email" id="student0" maxlength="50" name="student_email" value="{{ student_email }}" readonly/>
+			</form>	
+		</div>
+		<div class="row">
+			<a id="add-member-button" onclick="add_member()" class="ghost-button">Add member</a>
+			<a id="submit-button" onclick="submit_form()" class="ghost-button">Submit</a>
+		</div>
+	</body>
+</html>

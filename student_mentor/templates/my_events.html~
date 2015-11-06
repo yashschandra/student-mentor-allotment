@@ -1,0 +1,78 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<script>
+		function request_meeting(id,query)
+		{
+			document.getElementsByName('id')[0].value=id;
+			document.getElementsByName('query')[0].value=query;
+			document.getElementById('form').submit();
+		}
+		function leave_event(id,query)
+		{
+			document.getElementsByName('id')[0].value=id;
+			document.getElementsByName('query')[0].value=query;
+			document.getElementById('form').submit();
+		}
+	</script>
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<form method="post" id="form">
+			{% csrf_token %}
+			<input type="hidden" name="id"/>
+			<input type="hidden" name="query"/>
+		</form>
+		<div class="row" style="margin: 15px">
+			{% if events %}
+				{% for event in events %}
+					<div class="col-md-3"><h4 style="color: #ffffff">{{ event.event.event_name }}</h4></div><div class="col-md-3"><h4 style="color: #ffffff">{{ event.mentor.student.student_name }}</h4></div><div class="col-md-3">
+						{% if event.event.mentorevent %}
+							{% if event.meeting_request == 'None' %}
+								{% if event.event.teamevent %}
+									<h4><a href="#" class="ghost-button" onclick="request_meeting({{ event.team_id }},'request_meeting_team')" style="color: #ffffff">Request Meeting</a></h4>
+								{% else %}
+									<h4><a href="#" class="ghost-button" onclick="request_meeting({{ event.participant_id }},'request_meeting_participant')" style="color: #ffffff">Request Meeting</a></h4>
+								{% endif %}
+							{% elif event.meeting_request == 'Pending' %}
+								<h4 style="color: #ffffff">Request Sent</h4>
+							{% elif event.meeting_request == 'Accepted' %}
+								<h4><a href="/meetings" class="ghost-button" style="color: #ffffff">Check time for meeting</a></h4>
+							{% endif %}
+						{% endif %}
+					</div><div class="col-md-3">
+						{% if not event.event.teamevent %}
+							<h4><a href="#" class="ghost-button" onclick="leave_event({{ event.participant_id }},'leave_event')" style="color: #ffffff">Leave</a></h4>
+						{% endif %}
+					</div>
+				{% endfor %}
+			{% else %}
+				<h4 style="color: #ffffff">You have not participated in any event.</h4>
+			{% endif %}
+		</div>
+	</body>
+</html>

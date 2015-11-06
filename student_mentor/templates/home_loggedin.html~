@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<script>
+		function submit_form(query)
+		{
+			document.getElementsByName('query')[0].value = query;
+			document.getElementById('form').submit();
+		}
+	</script>
+	<body>
+		<p>{{ student_id }}</p>
+		<form method="post" id="form">
+			{% csrf_token %}
+			<input type="hidden" name="query"/>
+		</form>
+		<button type="button" onclick="submit_form('register')">Register</button>
+		<button type="button" onclick="submit_form('join_club')">Join Club</button>
+		<button type="button" onclick="submit_form('getinfo')">Get Info</button>
+		<button type="button" onclick="submit_form('my_events')">My Events</button>
+		<button type="button" onclick="submit_form('my_clubs')">My Clubs</button>
+		<button type="button" onclick="submit_form('mentor_event')">Mentor Event</button>
+		<button type="button" onclick="submit_form('team_requests')">Team Requests</button>
+		<button type="button" onclick="submit_form('meeting_request')">Meeting Request</button>
+		<button type="button" onclick="submit_form('meetings')">Meetings</button>
+		<a href="#" onclick="signOut()">Sign out</a>
+	</body>
+</html>

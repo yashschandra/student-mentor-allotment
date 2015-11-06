@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<html>
+	<link href="{% static "css/jquery-ui.css" %}" rel="stylesheet">
+	<script src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="{% static "js/jquery-ui.js" %}"></script>
+	<script>
+		var form="{{ type }}";
+		if(form=='event')
+		{
+			$(function() 
+				{
+					$( "#id_on" ).datepicker({changeYear: true, changeMonth: true, yearRange : 'c-65:c+10', dateFormat: 'yy-mm-dd'});
+					$( "#id_deadline" ).datepicker({changeYear: true, changeMonth: true, yearRange : 'c-65:c+10', dateFormat: 'yy-mm-dd'});
+				}
+			);
+		}
+	</script>
+	<body>
+		<form method="post" id="form">
+			{% csrf_token %}
+			<table>{{ form.as_table }}</table>
+			<button type="submit">Submit</button>
+		</form>
+	</body>
+</html>

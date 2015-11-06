@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signin.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<form method="post" id="form">
+			{% csrf_token %}
+			<input type="hidden" name="query"/>
+		</form>
+		<div class="row">
+			<div><h3 style="color: #ffffff;">Welcome</h3></div>
+			<div class="g-signin2" data-onsuccess="onSignIn"></div>
+		</div>
+		
+		<!--a href="#" onclick="signOut()">Sign out</a-->
+	</body>
+	<script>
+		var csrf=document.getElementsByName('csrfmiddlewaretoken')[0].value;
+		function submit_form(query)
+		{
+			document.getElementsByName('query')[0].value = query;
+			document.getElementById('form').submit();
+		}
+	</script>
+</html>

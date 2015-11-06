@@ -1,0 +1,17 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/signout.js" %}" defer></script>
+	<script>
+		$(document).ready(function()
+			{
+				auto();
+			}
+		);
+	</script>
+	<body>
+		Redirecting....
+	</body>
+</html>

@@ -1,0 +1,9 @@
+<html>
+	<body>
+		{{ event.event_name }}<br>
+		<form method="post">
+			Password: <input type="password" name="password"/>
+			<button type="submit">Delete</button>
+		</form>
+	</body>
+</html>

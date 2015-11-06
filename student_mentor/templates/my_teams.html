@@ -1,0 +1,62 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<script>
+		var id_token="{{ id_token }}";
+	</script>
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<script>
+		function submit_form(id,query)
+		{
+			document.getElementsByName('id')[0].value=id;
+			document.getElementsByName('query')[0].value=query;
+			document.getElementById('form').submit();
+		}
+	</script>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<form id="form" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="id"/>
+			<input type="hidden" name="query"/>
+		</form>
+		<div class="row" style="margin: 15px">
+			{% if teams %}
+				{% for team in teams %}
+					{% if team.eligible %}
+						<div class="col-md-3"><h4 style="color: #ffffff">{{ team.team_name }}</h4></div><div class="col-md-3"><h4 style="color: #ffffff">{{ team.event.event_name }}</h4></div><div class="col-md-3"><h4><a class="ghost-button" href="/add_team_members/{{ team.team_id }}">Add Member</a></h4></div><div class="col-md-3"><h4><a href="#" class="ghost-button" onclick="submit_form({{ team.team_id }},'leave_team')">Leave</a></h4></div>
+					{% else %}
+						<div class="col-md-3"><h4 style="color: #ffffff">{{ team.team_name }}</h4></div><div class="col-md-3"><h4 style="color: #ffffff">{{ team.event.event_name }}</h4></div><div class="col-md-3"><h4><a class="ghost-button" href="/add_team_members/{{ team.team_id }}">Add Member</a></h4></div><div class="col-md-3"><h4><a href="#" class="ghost-button" onclick="submit_form({{ team.team_id }},'leave_team')">Leave</a></h4></div>
+					{% endif %}
+				{% endfor %}
+			{% else %}
+				<h4 style="color: #ffffff">You are in no team.</h4>
+			{% endif %}
+		</div>
+	</body>
+</html>
+

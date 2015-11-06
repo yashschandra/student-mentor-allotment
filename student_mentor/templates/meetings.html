@@ -1,0 +1,56 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<script>
+		var id_token="{{ id_token }}";
+	</script>
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<div class="row" style="margin: 15px">
+			{% if participant_meeting %}
+				{% for p in participant_meeting %}
+					<div class="col-md-4"><h4 style="color: #ffffff">{{ p.participant.event.event_name }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ p.time }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ p.place }}</h4></div>
+				{% endfor %}
+			{% endif %}
+			{% if team_meeting %}
+				{% for t in team_meeting %}
+					<div class="col-md-4"><h4 style="color: #ffffff">{{ t.team.event.event_name }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ t.time }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ t.place }}</h4></div>
+				{% endfor %}
+			{% endif %}
+			{% if team_meeting_mentor %}
+				{% for t in team_meeting_mentor %}
+					<div class="col-md-4"><h4 style="color: #ffffff">{{ t.team.event.event_name }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ t.time }}</h4></div><div class="col-md-4"><h4 style="color: #ffffff">{{ t.place }}</h4></div>
+				{% endfor %}
+			{% endif %}
+			{% if not participant_meeting and not team_meeting and not team_meeting_mentor %}
+				<h4 style="color: #ffffff">No meetings.</h4>
+			{% endif %} 
+		</div>
+	</body>
+</html>

@@ -1,0 +1,10 @@
+<html>
+	<body>
+		{{ event.event_name }}<br>
+		<form method="post">
+			{% csrf_token %}
+			Password: <input type="password" name="password"/>
+			<button type="submit">Delete</button>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,46 @@
+{% load staticfiles %}
+<html>
+	<script type="text/javascript" src="{% static "js/jquery.1.11.1.js" %}"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="543928383101-mle3ureb6kp1ucflhefrgalt2cvffam9.apps.googleusercontent.com">
+	<script type="text/javascript" src="{% static "js/apis/g-signout.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/apis/g-check-token.js" %}"></script>
+	<link rel="stylesheet" href="{% static "dist/css/bootstrap.min.css" %}" />
+	<style>
+	.ghost-button {
+  display: inline-block;
+  width: 200px;
+  padding: 8px;
+  color: #fff;
+  border: 1px solid #fff;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+	</style>
+	<body class="container" style="padding: 10px; background-size: cover" background="{% static "download.jpg" %}">
+		<div class="row">
+			<div class="col-md-6">
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/home">Home</a></h3>
+				<h3><a style="float: left; margin: 15px; color: #ffffff" href="/profile">Profile</a></h3>
+			</div>
+			<div class="col-md-6">
+				<h3><a href="#" style="float: right; margin: 15px; color: #ffffff" onclick="signOut()">Sign out</a></h3>
+			</div>
+		</div>
+		<div class="row" style="margin: 15px">
+			<form method="post">
+				{% csrf_token %}
+				<table>
+					<tr><td><label for="email" style="color: #ffffff">Email of student:&nbsp;</label></td><td><input type="email" name="email" id="email" required/></td></tr>
+					<tr><td><label for="club" style="color: #ffffff">Select a club:&nbsp;</label></td><td><select name="club" required>
+						{% for club in clubs %}
+							<option value="{{ club.club_id }}">{{ club.club_name }}</option>
+						{% endfor %}
+					</select></td></tr>
+					<tr><td><label for="password" style="color: #ffffff">Secret Key:&nbsp;</label></td><td><input type="password" id="password" name="password" required/></td></tr>
+					<tr><td><button type="submit">Add student</button></td></tr>
+				</table>
+			</form>
+		</div>
+</html>
